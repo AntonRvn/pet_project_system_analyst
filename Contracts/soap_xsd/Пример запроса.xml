@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DepositDataRequest xmlns="http://bank.ru/deposit">
+    <ClientInfo>
+        <FullName>Калинин Виктор Петрович</FullName>
+        <BirthDate>1990-06-02</BirthDate>
+        <Address>г. Москва, ул. Тверская, д. 10, кв. 5</Address>
+        <AccountNumber>40817810000001234567</AccountNumber>
+        <Inn>123456789012</Inn>
+    </ClientInfo>
+    <DepositInfo>
+        <DepositType>Сберегательный</DepositType>
+        <Amount>500000.00</Amount>
+        <TermDays>365</TermDays>
+        <InterestRate>8.50</InterestRate>
+        <IsCapitalized>true</IsCapitalized>
+        <Currency>RUB</Currency>
+        <IsRevocable>false</IsRevocable>
+        <OpenDate>2025-01-15</OpenDate>
+    </DepositInfo>
+    <TaxInfo>
+        <PaidInterest>42500.00</PaidInterest>
+    </TaxInfo>
+</DepositDataRequest>

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://bank.ru/deposit"
+    xmlns:tns="http://bank.ru/deposit"
+    elementFormDefault="qualified">
+
+    <xs:element name="DepositDataRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="ClientInfo" type="tns:ClientInfoType"/>
+                <xs:element name="DepositInfo" type="tns:DepositInfoType"/>
+                <xs:element name="TaxInfo" type="tns:TaxInfoType"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="ClientInfoType">
+        <xs:sequence>
+            <xs:element name="FullName" type="tns:FullNameType"/>
+            <xs:element name="BirthDate" type="xs:date"/>
+            <xs:element name="Address" type="tns:AddressType" minOccurs="0"/>
+            <xs:element name="AccountNumber" type="tns:AccountNumberType"/>
+            <xs:element name="Inn" type="tns:InnType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="DepositInfoType">
+        <xs:sequence>
+            <xs:element name="DepositType" type="tns:DepositTypeType"/>
+            <xs:element name="Amount" type="tns:AmountType"/>
+            <xs:element name="TermDays" type="tns:TermDaysType"/>
+            <xs:element name="InterestRate" type="tns:InterestRateType"/>
+            <xs:element name="IsCapitalized" type="xs:boolean"/>
+            <xs:element name="Currency" type="tns:CurrencyType"/>
+            <xs:element name="IsRevocable" type="xs:boolean"/>
+            <xs:element name="OpenDate" type="xs:date"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="TaxInfoType">
+        <xs:sequence>
+            <xs:element name="PaidInterest" type="tns:AmountType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:simpleType name="FullNameType">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="5"/>
+            <xs:maxLength value="100"/>
+            <xs:pattern value="[А-Яа-яЁё\s\-]+"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="AddressType">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="200"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="AccountNumberType">
+        <xs:restriction base="xs:string">
+            <xs:length value="20"/>
+            <xs:pattern value="[0-9]{20}"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="InnType">
+        <xs:restriction base="xs:string">
+            <xs:length value="12"/>
+            <xs:pattern value="[0-9]{12}"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="DepositTypeType">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="5"/>
+            <xs:maxLength value="50"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="AmountType">
+        <xs:restriction base="xs:decimal">
+            <xs:minInclusive value="0.01"/>
+            <xs:maxInclusive value="100000000.00"/>
+            <xs:fractionDigits value="2"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="TermDaysType">
+        <xs:restriction base="xs:positiveInteger">
+            <xs:minInclusive value="1"/>
+            <xs:maxInclusive value="3650"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="InterestRateType">
+        <xs:restriction base="xs:decimal">
+            <xs:minInclusive value="0.01"/>
+            <xs:maxInclusive value="30.00"/>
+            <xs:fractionDigits value="2"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="CurrencyType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="RUB"/>
+            <xs:enumeration value="USD"/>
+            <xs:enumeration value="EUR"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+</xs:schema>
