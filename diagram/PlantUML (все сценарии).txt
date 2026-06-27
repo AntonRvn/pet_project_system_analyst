@@ -1,0 +1,123 @@
+@startuml
+actor "Клиент" as Client
+participant "Мкс Вклады" as msa_deposit
+participant "Мкс Клиенты" as msa_client
+participant "Мкс Договоры" as msa_contract
+participant "Мкс Счета" as msa_account
+participant "Бухгалтерия" as account_department
+participant "ФНС" as tax_service
+
+Client -> msa_deposit++: Клиент вводит параметры вклада
+msa_deposit -> msa_deposit: Рассчитывает условия вклада
+
+alt С заданным параметрами открыть вклад невозможно
+    msa_deposit -> msa_deposit: Проверка параметров
+    msa_deposit --> Client: Параметры недопустимы
+else Не удалось выполнить расчет
+    msa_deposit -> msa_deposit: Выполняется расчет
+    msa_deposit --> Client: Не удалось выполнить расчет
+else Расчет выполнен
+    msa_deposit -> msa_deposit: Расчитывает условия вклада
+    msa_deposit --> Client: Отображение рассчитанных условий
+
+    alt Клиент не согласен с условиями
+        Client -> msa_deposit: Не согласен с условиями
+        msa_deposit --> Client: Процесс прерван
+        
+    else Клиент подтверждает условия
+        Client -> msa_deposit: Подтверждает условия вклада
+        msa_deposit -> msa_client++: Запрос доп. данных клиента
+        msa_client --> msa_deposit--: Данные клиента
+        
+        msa_deposit -> msa_contract++: Запрос на формирование договора
+
+        alt Ошибка: договор не сформирован
+            msa_contract --> msa_deposit: Ошибка
+            msa_deposit --> Client: Ошибка: не удалось сформировать договор
+
+        else Договор сформирован
+
+            msa_contract --> msa_deposit--: Готовый договор
+            msa_deposit --> Client: Договор на подпись
+
+             alt Таймаут подписания
+                Client -> Client: Время, отведенное на подписание истекло
+                msa_deposit -> msa_contract++: Аннулировать договор
+                msa_contract --> msa_deposit--: Подтверждение
+                msa_deposit --> Client: Процесс прерван
+                
+            else Клиент отказался подписывать
+                Client -> msa_deposit: Отказ от подписи
+                msa_deposit --> Client: Процесс прерван
+                
+            else Клиент подписал
+                Client -> msa_deposit: Подписывает договор
+                msa_deposit -> msa_contract++: Сохранить подписанный договор
+                msa_contract --> msa_deposit--: Подтверждение сохранения
+                msa_deposit -> msa_account++: Открыть счет вклада
+                
+                alt Ошибка открытия счета
+                    msa_account --> msa_deposit: Ошибка
+                    msa_deposit -> msa_contract++: Деактивировать договор
+                    msa_contract --> msa_deposit--: Подтверждение
+                    msa_deposit --> Client: Не удалось открыть счет
+                    
+                else Счет открыт
+                    msa_account --> msa_deposit--: Подтверждение открытия счета
+                    msa_deposit --> Client: Запрос счета для пополнения
+                    
+                    alt Таймаут выбора счета
+                        Client -> Client: Время истекло
+                        msa_deposit -> msa_account++: Деактивировать счет
+                        msa_account --> msa_deposit--: Подтверждение
+                        msa_deposit -> msa_contract++: Деактивировать договор
+                        msa_contract --> msa_deposit--: Подтверждение
+                        msa_deposit --> Client: Процесс прерван
+                        
+                    else Клиент указал счет
+                        Client -> msa_deposit: Указывает счет для пополнения
+                        msa_deposit -> msa_account++: Проверить наличие суммы
+                        msa_account --> msa_deposit--: Результат проверки
+                        
+                        alt Недостаточно средств
+                            msa_deposit --> Client: Недостаточно средств. Пополните счет
+                            
+                            alt Таймаут пополнения
+                                Client -> Client: (время истекло)
+                                msa_deposit -> msa_account++: Деактивировать счет
+                                msa_account --> msa_deposit--: Подтверждение
+                                msa_deposit -> msa_contract++: Деактивировать договор
+                                msa_contract --> msa_deposit--: Подтверждение
+                                msa_deposit --> Client: Процесс прерван
+                                
+                            else Клиент пополнил счет
+                                msa_deposit -> msa_account++: Повторная проверка
+                                msa_account --> msa_deposit--: Сумма достаточна
+                                msa_deposit -> msa_deposit: Активирует вклад
+                            end
+                            
+                        else Сумма достаточна
+                            msa_deposit -> msa_deposit: Активирует вклад
+                        end
+                        msa_deposit -> account_department++: Передать данные о вкладе
+                        msa_deposit -> tax_service++: Передать данные о вкладе
+                        
+                        alt Системы недоступны
+                            account_department --> msa_deposit: Таймаут/Ошибка
+                            tax_service --> msa_deposit: Таймаут/Ошибка
+                            msa_deposit -> msa_deposit: Сохранить в очередь
+                            
+                        else Все системы доступны
+                            account_department --> msa_deposit--: Подтверждение
+                            tax_service --> msa_deposit--: Подтверждение
+                        end
+                        
+                        msa_deposit --> Client--: Успешное открытие вклада
+                    end
+                end
+            end
+        end
+    end
+end    
+
+@enduml

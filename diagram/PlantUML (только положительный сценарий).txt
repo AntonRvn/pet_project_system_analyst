@@ -1,0 +1,36 @@
+@startuml
+actor "Клиент" as Client
+participant "Мкс Вклады" as msa_deposit
+participant "Мкс Клиенты" as msa_client
+participant "Мкс Договоры" as msa_contract
+participant "Мкс Счета" as msa_account
+participant "Бухгалтерия" as account_department
+participant "ФНС" as tax_service
+
+Client -> msa_deposit: Ввод параметров вклада
+msa_deposit -> msa_deposit: Расчёт условий
+msa_deposit --> Client: Отображение условий
+
+Client -> msa_deposit: Подтверждение условий
+msa_deposit -> msa_client: Запрос данных клиента
+msa_client --> msa_deposit: Данные клиента
+msa_deposit -> msa_contract: Формирование договора
+msa_contract --> msa_deposit: Готовый договор
+msa_deposit --> Client: Договор на подпись
+
+Client -> msa_deposit: Подписание договора
+msa_deposit -> msa_contract: Сохранение договора
+msa_contract --> msa_deposit: Подтверждение
+msa_deposit -> msa_account: Открытие счёта
+msa_account --> msa_deposit: Подтверждение
+
+Client -> msa_deposit: Указание счёта пополнения
+msa_deposit -> msa_account: Проверка средств
+msa_account --> msa_deposit: Сумма достаточна
+msa_deposit -> msa_deposit: Активация вклада
+
+msa_deposit -> account_department: Уведомление
+msa_deposit -> tax_service: Уведомление
+msa_deposit --> Client: Успешное открытие
+
+@enduml
