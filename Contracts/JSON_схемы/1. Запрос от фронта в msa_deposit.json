@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "process": { "const": "deposit_calculation" },
+    "input_params": {
+      "type": "object",
+      "properties": {
+        "deposit_amount": { "type": "number", "minimum": 0, "exclusiveMinimum": 0 },
+        "term_months": { "type": "integer", "minimum": 1, "maximum": 60 },
+        "interest_rate": { "type": "number", "minimum": 0, "maximum": 30 },
+        "allow_refill": { "type": "boolean" }
+      },
+      "required": ["deposit_amount", "term_months", "interest_rate", "allow_refill"],
+      "additionalProperties": false
+    }
+  },
+  "required": ["process", "input_params"]
+}
+
+Пример
+{
+  "process": "deposit_calculation",
+  "input_params": {
+    "deposit_amount": 150000,
+    "term_months": 18,
+    "interest_rate": 9.25,
+    "allow_refill": true
+  }
+}

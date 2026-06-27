@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "contract_id": { "type": "string" },
+    "client_id": { "type": "string" },
+    "contract_data": { "type": "object" },
+    "signed_at": { "type": "string", "format": "date-time" },
+    "signature_method": { "const": "electronic_esignature" },
+    "contract_status": { "type": "string" }
+  },
+  "required": ["contract_id", "client_id", "contract_data", "signed_at", "signature_method", "contract_status"]
+}
+
+Пример
+{
+  "contract_id": "CTR-DEP-20260407-099",
+  "client_id": "CL98765432",
+  "contract_data": {
+    "deposit_amount": 150000,
+    "term_months": 18,
+    "interest_rate": 9.25,
+    "allow_refill": true,
+    "expected_yield": 20812.50
+  },
+  "signed_at": "2026-04-07T11:35:00Z",
+  "signature_method": "electronic_esignature",
+  "contract_status": "signed"
+}

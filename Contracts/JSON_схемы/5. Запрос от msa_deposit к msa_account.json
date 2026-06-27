@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "account_type": { "const": "deposit" },
+    "client_id": { "type": "string" },
+    "contract_id": { "type": "string" },
+    "initial_balance": { "type": "number", "minimum": 0 },
+    "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+    "opening_date": { "type": "string", "format": "date" },
+    "interest_rate": { "type": "number" },
+    "term_months": { "type": "integer" }
+  },
+  "required": ["account_type", "client_id", "contract_id", "initial_balance", "currency", "opening_date", "interest_rate", "term_months"]
+}
+
+Пример
+{
+  "account_type": "deposit",
+  "client_id": "CL98765432",
+  "contract_id": "CTR-DEP-20260407-099",
+  "initial_balance": 150000,
+  "currency": "RUB",
+  "opening_date": "2026-04-07",
+  "interest_rate": 9.25,
+  "term_months": 18
+}
